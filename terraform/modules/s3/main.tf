@@ -38,12 +38,7 @@ resource "aws_s3_bucket_public_access_block" "this" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_policy" "from_vpc_endpoint" {
+resource "aws_s3_bucket_policy" "combined_bucket_policy" {
   bucket = aws_s3_bucket.this.id
-  policy = data.aws_iam_policy_document.from_vpc_endpoint_only.json
-}
-
-resource "aws_s3_bucket_policy" "sse_only" {
-  bucket = aws_s3_bucket.this.id
-  policy = data.aws_iam_policy_document.sse_only.json
+  policy = data.aws_iam_policy_document.combined_bucket_policy.json
 }

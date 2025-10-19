@@ -46,3 +46,10 @@ data "aws_iam_policy_document" "sse_only" {
     }
   }
 }
+
+data "aws_iam_policy_document" "combined_bucket_policy" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.from_vpc_endpoint_only.json,
+    data.aws_iam_policy_document.sse_only.json
+  ]
+}
