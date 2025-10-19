@@ -118,4 +118,4 @@ jobs:
 
       - name: Terraform apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform --non-interactive apply
+        run: terraform apply
