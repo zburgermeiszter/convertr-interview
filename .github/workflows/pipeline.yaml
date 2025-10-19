@@ -3,9 +3,13 @@ name: 'Build and deploy 🚀'
 
 on:
   push:
+  pull_request:
+    branches:
+      - main
 
 permissions:
   id-token: write # for OIDC
+  pull-requests: write # For `terraform plan`` comments on PRs
 
 env:
   TF_LOG: ERROR
@@ -114,7 +118,51 @@ jobs:
         run: terraform init
 
       - name: Terraform plan
-        run: terraform plan
+        id: plan
+        run: terraform plan -no-color
+
+      - name: Update Pull Request
+        uses: actions/github-script@v8
+        if: github.event.pull_request.base.ref == 'master'
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const planTitle = `Terraform Plan 📖`
+            const output = `#### ${planTitle}\`${{ steps.plan.outcome }}\`
+            <details><summary>Show Plan</summary>
+
+            \`\`\`\n
+            ${{ steps.plan.outputs.stdout }}
+            \`\`\`
+
+            </details>
+
+            *Pushed by: @${{ github.actor }}*
+            *Action: \`${{ github.event_name }}\`*`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot'
+              && comment.body.includes(planTitle)
+            );
+            if (botComment) {
+              github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+              });
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
 
       - name: Terraform apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
