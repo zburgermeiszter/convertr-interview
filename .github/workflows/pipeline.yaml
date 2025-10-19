@@ -98,9 +98,7 @@ jobs:
         with:
           version: v${{ env.TFSEC_VERSION }}
           github_token: ${{ github.token }}
-
-      - name: tfsec
-        run: tfsec --minimum-severity=HIGH
+          additional_args: --minimum-severity=HIGH
 
   terraform-plan-apply:
     name: Run terraform plan/apply
