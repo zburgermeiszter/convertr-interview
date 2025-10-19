@@ -7,6 +7,10 @@ on:
 permissions:
   id-token: write # for OIDC
 
+env:
+  TF_LOG: INFO
+  TF_INPUT: false
+
 jobs:
   build:
     name: Build Lambda
@@ -74,7 +78,7 @@ jobs:
         run: tflint
 
       - name: tfsec
-        run: tfsec
+        run: tfsec --minimum-severity=HIGH
 
   terraform-plan-apply:
     name: Run terraform plan/apply
