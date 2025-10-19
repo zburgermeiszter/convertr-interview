@@ -65,9 +65,6 @@ jobs:
       - name: Install asdf & tools
         uses: asdf-vm/actions/install@v4
 
-      - name: Terraform init
-        run: terraform init
-
       - name: Terraform validate
         run: terraform validate
 
@@ -112,6 +109,9 @@ jobs:
 
       - name: Check caller identity
         run: aws sts get-caller-identity
+
+      - name: Terraform init
+        run: terraform init
 
       - name: Terraform plan
         run: terraform plan
