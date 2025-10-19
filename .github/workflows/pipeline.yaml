@@ -79,9 +79,9 @@ jobs:
       - name: tfsec
         run: tfsec
 
-  terraform-plan-apply-dev:
+  terraform-plan-apply:
     name: Run terraform plan/apply
-    needs: build
+    needs: terraform-check
     environment: dev
     runs-on: ubuntu-latest
     defaults:
