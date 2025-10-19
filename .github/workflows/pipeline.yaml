@@ -97,7 +97,7 @@ jobs:
         uses: aquasecurity/tfsec-action@v1.0.3
         with:
           version: v${{ env.TFSEC_VERSION }}
-          github-token: ${{ github.token }}
+          github_token: ${{ github.token }}
 
       - name: tfsec
         run: tfsec --minimum-severity=HIGH
