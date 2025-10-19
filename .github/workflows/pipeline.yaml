@@ -151,12 +151,12 @@ jobs:
             const output = `#### ${planTitle}\`${{ steps.plan.outcome }}\`
             <details><summary>Show Plan</summary>
 
-            `stdout`:
+            \`stdout\`:
             \`\`\`\n
             ${{ steps.plan.outputs.stdout }}
             \`\`\`
 
-            `stderr`:
+            \`stderr\`:
             \`\`\`\n
             ${{ steps.plan.outputs.stderr }}
             \`\`\`
