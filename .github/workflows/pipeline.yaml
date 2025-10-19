@@ -8,7 +8,7 @@ permissions:
   id-token: write # for OIDC
 
 env:
-  TF_LOG: INFO
+  TF_LOG: ERROR
   TF_INPUT: false
 
 jobs:
