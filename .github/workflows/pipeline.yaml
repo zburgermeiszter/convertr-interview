@@ -76,7 +76,7 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: env.TERRAFORM_VERSION
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
       - name: Terraform validate
         run: terraform validate
@@ -87,7 +87,7 @@ jobs:
       - uses: terraform-linters/setup-tflint@v6
         name: Setup TFLint
         with:
-          tflint_version: env.TFLINT_VERION
+          tflint_version: ${{ env.TFLINT_VERION }}
 
       - name: tflint
         run: tflint
@@ -95,7 +95,7 @@ jobs:
       - name: Setup tfsec
         uses: aquasecurity/tfsec-action@v1.0.3
         with:
-          version: env.TFSEC_VERSION
+          version: ${{ env.TFSEC_VERSION }}
 
       - name: tfsec
         run: tfsec --minimum-severity=HIGH
@@ -123,7 +123,7 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: env.TERRAFORM_VERSION
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -151,8 +151,14 @@ jobs:
             const output = `#### ${planTitle}\`${{ steps.plan.outcome }}\`
             <details><summary>Show Plan</summary>
 
+            `stdout`:
             \`\`\`\n
             ${{ steps.plan.outputs.stdout }}
+            \`\`\`
+
+            `stderr`:
+            \`\`\`\n
+            ${{ steps.plan.outputs.stderr }}
             \`\`\`
 
             </details>
