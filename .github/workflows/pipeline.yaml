@@ -126,7 +126,7 @@ jobs:
 
       - name: Update Pull Request
         uses: actions/github-script@v8
-        if: github.event.pull_request.base.ref == 'master'
+        if: github.event.pull_request.base.ref == 'main'
         with:
           github-token: ${{ github.token }}
           script: |
