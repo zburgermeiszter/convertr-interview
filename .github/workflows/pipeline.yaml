@@ -5,10 +5,18 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/**'
+      - 'lambda/**'
+      - 'terraform/**'
   pull_request:
     types: [opened, edited, synchronize]
     branches:
       - main
+    paths:
+      - '.github/**'
+      - 'lambda/**'
+      - 'terraform/**'
 
 permissions:
   id-token: write # for OIDC
