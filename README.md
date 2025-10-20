@@ -1,16 +1,13 @@
-# Picture Upload Service
-
-A serverless image upload service built with AWS.  
-For detailed task definition navigate to [DevOps Interview Task 2025.pdf](<./DevOps Interview Task 2025.pdf>)
-
-## Features
+# AWS Picture Upload Service interview task @ Convertr
 
 - Secure image upload via REST API using API Gateway
 - Lambda in private VPC subnet
 - S3 access via S3 VPC endpoint ONLY
 - File type validation using magic byte detection (Supported formats: JPEG, PNG, GIF, WebP)
-- KMS encryption at rest in S3 bucket
-- Automated CI/CD with GitHub Actions with OIDC auth
+- KMS encryption at rest in the S3 bucket
+- Automated CI/CD with GitHub Actions with OIDC auth to AWS
+
+For detailed task definition, navigate to [DevOps Interview Task 2025.pdf](<./DevOps Interview Task 2025.pdf>)
 
 ## Architecture
 
@@ -50,13 +47,29 @@ flowchart LR
 └── .github/workflows/     # CI/CD pipeline
 ```
 
-## Prerequisites
+## CI/CD
+
+The following tasks are automated using GitHub Actions:
+
+- Lambda build using `bun`
+- Terraform validation, linting, vulnerability checking (audit, tfsec)
+- `terraform plan` on feature branches
+- Easy-access plan output in Pull Request comments.
+- `terraform apply` on `main`
+
+**IMPORTANT**  
+Configure the following environment variables in repository settings:
+
+- `ROLE_ARN` - ARN of role to assume through OIDC
+- `AWS_REGION` - Target AWS region for deployment
+
+## Quick Start
+
+### Prerequisites
 
 - Bun 1.2.22+
 - Terraform 1.13.3+
 - Configured AWS credentials
-
-## Quick Start
 
 ### Build Lambda
 
@@ -69,12 +82,13 @@ bun install
 bun run build
 ```
 
-This will emit a single `index.mjs` file to `lambda/dist` folder.  
-Terraform is automatically zip this file for Lambda deployment.
+This will emit a single `index.mjs` file to the `lambda/dist` folder.  
+Terraform automatically zip this file for Lambda deployment.
 
-### Configure Backend
+### Configure terraform
 
-Update `terraform/environments/dev/backend.tf` with your S3 backend bucket.
+Update `terraform/environments/dev/backend.tf` with your S3 backend bucket.  
+Configure project name, AWS region and environemnt name in `terraform/environments/dev/variables.tf`
 
 ### Deploy
 
@@ -101,9 +115,10 @@ curl -X POST $API_ENDPOINT \
   --data-binary "@/path/to/image.png"
 ```
 
-Please note that the images are stored in S3 are using pseudorandom names to avoid naming collision, therefore `Content-Disposition` (with `filename`) header is not defined.
+Please note that the images stored in S3 use pseudorandom names to avoid naming collisions.  
+Therefore, the `Content-Disposition` (with `filename`) header is not defined.
 
-## Cleanup
+### Cleanup
 
 ```bash
 cd terraform/environments/dev
@@ -112,7 +127,7 @@ terraform destroy
 
 ## Response Examples
 
-**Success:**
+### Success
 
 ```json
 {
@@ -123,7 +138,7 @@ terraform destroy
 }
 ```
 
-**Error:**
+### Error
 
 ```json
 {
@@ -131,29 +146,12 @@ terraform destroy
 }
 ```
 
-## CI/CD
-
-The following tasks are automated using GitHub Actions:
-
-- Lambda build using `bun`
-- Terraform validation, linting, viunnerability checking (audit, tfsec)
-- `terraform plan` on feature branches
-- Easy-access plan output in Pull Request comments.
-- `terraform apply` on `main`
-
-**IMPORTANT**  
-Configure the following environemnt variables in repository settings:
-
-- `ROLE_ARN` - ARN of role to assume through OIDC
-- `AWS_REGION` - Target AWS region for deployment
-
-
 # Improvements
 
-The following optional improvemnts have been identified during the development but skipped due to the limited time and scope of requirements:
+The following optional improvements have been identified during the development, but skipped due to the limited time and scope of requirements:
 
 - Use pre-signed S3 URLs for large files to exceed API gateway size limits and Lambda execution time limits.
 - Configure CloudWatch alarms
 - API Gateway throttling
 - Use Lambda versions and aliases for easier release/rollback
-- Configure checkov for vulnerability scanning
+- Configure Checkov for vulnerability scanning
